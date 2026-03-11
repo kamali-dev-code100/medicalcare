@@ -1,0 +1,151 @@
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import API from '../api/axios'
+import Icon from '../components/Icon'
+
+const statusClass = { critical:'badge-critical', stable:'badge-stable', monitoring:'badge-monitoring', admitted:'badge-admitted', discharged:'badge-discharged' }
+
+export default function Patients() {
+  const [patients, setPatients] = useState([])
+  const [search,   setSearch]   = useState('')
+  const [status,   setStatus]   = useState('')
+  const [loading,  setLoading]  = useState(true)
+  const [page,     setPage]     = useState(1)
+  const [total,    setTotal]    = useState(0)
+  const navigate = useNavigate()
+
+  const fetchPatients = async () => {
+    setLoading(true)
+    try {
+      const params = new URLSearchParams({ page, limit: 10 })
+      if (search) params.append('search', search)
+      if (status) params.append('status', status)
+      const { data } = await API.get(`/patients?${params}`)
+      setPatients(data.patients)
+      setTotal(data.total)
+    } catch(e) { console.error(e) }
+    finally { setLoading(false) }
+  }
+
+  useEffect(() => { fetchPatients() }, [page, status])
+
+  const riskColor = (s) => s > 70 ? 'var(--red)' : s > 40 ? 'var(--yellow)' : 'var(--green)'
+
+  return (
+    <div>
+      {/* Header */}
+      <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:28 }} className="fade-up">
+        <div>
+          <h1 style={{ fontSize:24, fontWeight:800, letterSpacing:'-0.5px', marginBottom:4 }}>Patients</h1>
+          <p style={{ fontSize:14, color:'var(--text2)' }}>{total} total records in the system</p>
+        </div>
+        <button className="btn-primary" onClick={() => navigate('/patients/add')}>
+          <Icon name="plus" size={15} color="#fff" /> Add Patient
+        </button>
+      </div>
+
+      {/* Filters */}
+      <div style={{ display:'flex', gap:10, marginBottom:20 }} className="fade-up-1">
+        <div style={{ position:'relative', flex:1, maxWidth:320 }}>
+          <span style={{ position:'absolute', left:12, top:'50%', transform:'translateY(-50%)', color:'var(--text3)', display:'flex' }}>
+            <Icon name="search" size={15} />
+          </span>
+          <input className="inp" style={{ paddingLeft:38 }}
+            placeholder="Search name, ID, phone..."
+            value={search} onChange={e => setSearch(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && fetchPatients()} />
+        </div>
+        <select className="inp" style={{ width:160 }} value={status} onChange={e => { setStatus(e.target.value); setPage(1) }}>
+          <option value="">All Status</option>
+          {['admitted','stable','critical','monitoring','discharged'].map(s => (
+            <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>
+          ))}
+        </select>
+        <button className="btn-primary" onClick={fetchPatients}>
+          <Icon name="search" size={14} color="#fff" /> Search
+        </button>
+        {(search || status) && (
+          <button className="btn-ghost" onClick={() => { setSearch(''); setStatus(''); setPage(1); }}>
+            Clear
+          </button>
+        )}
+      </div>
+
+      {/* Table Card */}
+      <div className="card fade-up-2" style={{ padding:0, overflow:'hidden' }}>
+        {loading ? (
+          <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:10, padding:48, color:'var(--text3)' }}>
+            <div style={{ width:18, height:18, border:'2px solid var(--accent)', borderTopColor:'transparent', borderRadius:'50%', animation:'spin 0.7s linear infinite' }} />
+            Loading patients...
+            <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+          </div>
+        ) : patients.length === 0 ? (
+          <div style={{ padding:48, textAlign:'center', color:'var(--text3)' }}>
+            <Icon name="patients" size={40} color="var(--text3)" />
+            <div style={{ marginTop:12, fontSize:14 }}>No patients found</div>
+          </div>
+        ) : (
+          <table className="table">
+            <thead>
+              <tr style={{ background:'var(--surface2)' }}>
+                {['Patient', 'Age / Gender', 'Department', 'Status', 'AI Risk', 'Action'].map(h => (
+                  <th key={h}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {patients.map(p => (
+                <tr key={p._id} style={{ cursor:'pointer' }} onClick={() => navigate(`/patients/${p._id}`)}>
+                  <td>
+                    <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+                      <div style={{ width:34, height:34, borderRadius:'50%', background:'var(--accent-soft)', color:'var(--accent)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:700, flexShrink:0 }}>
+                        {p.name.split(' ').map(n => n[0]).join('')}
+                      </div>
+                      <div>
+                        <div style={{ fontWeight:600, fontSize:13 }}>{p.name}</div>
+                        <div style={{ fontSize:11, color:'var(--text3)' }}>{p.patientId}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td style={{ color:'var(--text2)', fontSize:13 }}>{p.age} yrs / {p.gender}</td>
+                  <td style={{ color:'var(--text2)', fontSize:13 }}>{p.department}</td>
+                  <td><span className={`badge ${statusClass[p.status]}`}>{p.status}</span></td>
+                  <td>
+                    <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+                      <div style={{ width:56, height:5, background:'var(--surface3)', borderRadius:3, overflow:'hidden' }}>
+                        <div style={{ height:'100%', width:`${p.aiRiskScore}%`, background: riskColor(p.aiRiskScore), borderRadius:3, transition:'width 0.4s' }} />
+                      </div>
+                      <span style={{ fontSize:12, fontWeight:700, color: riskColor(p.aiRiskScore) }}>{p.aiRiskScore}%</span>
+                    </div>
+                  </td>
+                  <td onClick={e => e.stopPropagation()}>
+                    <button className="btn-ghost" style={{ fontSize:12, padding:'6px 12px' }} onClick={() => navigate(`/patients/${p._id}`)}>
+                      <Icon name="eye" size={13} /> View
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+
+        {/* Pagination */}
+        <div style={{ padding:'14px 20px', borderTop:'1px solid var(--border)', display:'flex', justifyContent:'space-between', alignItems:'center', background:'var(--surface2)' }}>
+          <span style={{ fontSize:13, color:'var(--text3)' }}>
+            Showing page <strong style={{ color:'var(--text)' }}>{page}</strong> of <strong style={{ color:'var(--text)' }}>{Math.ceil(total / 10) || 1}</strong>
+          </span>
+          <div style={{ display:'flex', gap:8 }}>
+            <button className="btn-ghost" style={{ fontSize:12, padding:'6px 14px' }}
+              onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}>
+              ← Prev
+            </button>
+            <button className="btn-primary" style={{ fontSize:12, padding:'6px 14px' }}
+              onClick={() => setPage(p => p + 1)} disabled={page >= Math.ceil(total / 10)}>
+              Next →
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
