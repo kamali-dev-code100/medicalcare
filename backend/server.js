@@ -11,12 +11,28 @@ require("dotenv").config();
 const app = express();
 const server = http.createServer(app);
 
+// ── Allowed Origins ──────────────────────────────────────────────────────────
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://medai-care.vercel.app",
+  process.env.CLIENT_URL,
+].filter(Boolean)
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true)
+    if (allowedOrigins.some(o => origin.startsWith(o))) {
+      callback(null, true)
+    } else {
+      callback(new Error("Not allowed by CORS: " + origin))
+    }
+  },
+  credentials: true,
+}
+
 // ── Socket.io setup ──────────────────────────────────────────────────────────
 const io = new Server(server, {
-  cors: {
-    origin: process.env.CLIENT_URL || "https://medai-care.vercel.app",
-    methods: ["GET", "POST"],
-  },
+  cors: corsOptions,
 });
 app.set("io", io);
 
@@ -32,14 +48,11 @@ io.on("connection", (socket) => {
 
 // ── Middleware ───────────────────────────────────────────────────────────────
 app.use(helmet());
-app.use(cors({
-  origin: process.env.CLIENT_URL || "http://localhost:5173",
-  credentials: true,
-}));
+app.use(cors(corsOptions));
 app.use(express.json({ limit: "10mb" }));
 app.use(morgan("dev"));
 
-// Rate limiting – 100 requests per 15 min per IP
+// Rate limiting
 app.use("/api", rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 5000,
