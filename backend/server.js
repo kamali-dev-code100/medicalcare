@@ -22,7 +22,11 @@ const allowedOrigins = [
 const corsOptions = {
   origin: (origin, callback) => {
     if (!origin) return callback(null, true)
-    if (allowedOrigins.some(o => origin.startsWith(o))) {
+    if (
+      origin.includes('localhost') ||
+      origin.includes('vercel.app') ||
+      origin === process.env.CLIENT_URL
+    ) {
       callback(null, true)
     } else {
       callback(new Error("Not allowed by CORS: " + origin))
