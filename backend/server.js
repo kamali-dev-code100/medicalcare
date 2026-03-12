@@ -90,9 +90,9 @@ mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("✅ MongoDB Connected");
-    server.listen(process.env.PORT || 5000, () => {
-      console.log(`🚀 Server: http://localhost:${process.env.PORT || 5000}`);
-    });
+ server.listen(process.env.PORT || 5000, "0.0.0.0", () => {
+  console.log(`🚀 Server: http://localhost:${process.env.PORT || 5000}`);
+});
   })
   .catch((err) => {
     console.error("❌ MongoDB Error:", err.message);
