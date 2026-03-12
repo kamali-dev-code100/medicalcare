@@ -15,6 +15,7 @@ const server = http.createServer(app);
 const allowedOrigins = [
   "http://localhost:5173",
   "https://medai-care.vercel.app",
+  "https://medai-care.vercel.app",
   process.env.CLIENT_URL,
 ].filter(Boolean)
 
