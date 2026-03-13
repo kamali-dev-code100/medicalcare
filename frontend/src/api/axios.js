@@ -1,8 +1,7 @@
 import axios from 'axios'
 
 const API = axios.create({
-  baseURL: 'https://medicalcare-production.up.railway.app/api',
-  withCredentials: true,
+ baseURL: import.meta.env.VITE_API_URL || '/api',
 })
 
 // Auto-attach JWT token to every request
