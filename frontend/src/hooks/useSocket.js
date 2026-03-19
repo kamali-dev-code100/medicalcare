@@ -37,9 +37,3 @@ export const useSocket = () => {
 
   return { joinPatientRoom, onVitalsUpdate, onCriticalAlert }
 }
-```
-
-Then make sure `frontend/.env.production` has:
-```
-VITE_API_URL=https://medicalcare-production.up.railway.app/api
-VITE_SOCKET_URL=https://medicalcare-production.up.railway.app
