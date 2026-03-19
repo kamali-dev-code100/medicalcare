@@ -32,7 +32,7 @@ export default function AddPatient() {
   }
 
   const Section = ({ title, icon }) => (
-    <div style={{ fontSize:13, fontWeight:700, color:'var(--accent)', margin:'24px 0 4px', display:'flex', alignItems:'center', gap:7 }}>
+    <div style={{ fontSize:13, fontWeight:700, color:'var(--accent)', margin:'22px 0 4px', display:'flex', alignItems:'center', gap:7 }}>
       <Icon name={icon} size={15} color="var(--accent)" /> {title}
     </div>
   )
@@ -40,12 +40,12 @@ export default function AddPatient() {
   return (
     <div style={{ maxWidth:800 }}>
       {/* Header */}
-      <div style={{ display:'flex', alignItems:'center', gap:14, marginBottom:28 }} className="fade-up">
+      <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:22, flexWrap:'wrap' }} className="fade-up">
         <button className="btn-ghost" onClick={() => navigate('/patients')}>
           <Icon name="arrowLeft" size={15} /> Back
         </button>
         <div>
-          <h1 style={{ fontSize:22, fontWeight:800, letterSpacing:'-0.4px', marginBottom:3 }}>Add New Patient</h1>
+          <h1 style={{ fontSize:'clamp(18px, 4vw, 22px)', fontWeight:800, letterSpacing:'-0.4px', marginBottom:2 }}>Add New Patient</h1>
           <p style={{ fontSize:13, color:'var(--text2)' }}>Fill in patient details to create a new record</p>
         </div>
       </div>
@@ -53,22 +53,22 @@ export default function AddPatient() {
       <form onSubmit={handleSubmit} className="card fade-up-1">
 
         <Section title="Personal Information" icon="user" />
-        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:14, marginTop:12 }}>
+        <div className="form-grid-2" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12, marginTop:10 }}>
           <div>
             <label className="inp-label">Full Name *</label>
             <input className="inp" value={form.name} onChange={set('name')} required placeholder="Arjun Sharma" />
           </div>
           <div>
             <label className="inp-label">Phone Number *</label>
-            <input className="inp" value={form.phone} onChange={set('phone')} required placeholder="9876543210" />
+            <input className="inp" value={form.phone} onChange={set('phone')} required placeholder="9876543210" inputMode="tel" />
           </div>
           <div>
             <label className="inp-label">Age *</label>
-            <input className="inp" type="number" value={form.age} onChange={set('age')} required placeholder="45" min="0" max="150" />
+            <input className="inp" type="number" value={form.age} onChange={set('age')} required placeholder="45" min="0" max="150" inputMode="numeric" />
           </div>
           <div>
             <label className="inp-label">Email</label>
-            <input className="inp" type="email" value={form.email} onChange={set('email')} placeholder="patient@email.com" />
+            <input className="inp" type="email" value={form.email} onChange={set('email')} placeholder="patient@email.com" inputMode="email" />
           </div>
           <div>
             <label className="inp-label">Gender *</label>
@@ -92,7 +92,7 @@ export default function AddPatient() {
         </div>
 
         <Section title="Medical Information" icon="stethoscope" />
-        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:14, marginTop:12 }}>
+        <div className="form-grid-2" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12, marginTop:10 }}>
           <div>
             <label className="inp-label">Department *</label>
             <select className="inp" value={form.department} onChange={set('department')} required>
@@ -112,7 +112,7 @@ export default function AddPatient() {
           </div>
           <div>
             <label className="inp-label">Ward</label>
-            <input className="inp" value={form.ward} onChange={set('ward')} placeholder="ICU, Maternity, General..." />
+            <input className="inp" value={form.ward} onChange={set('ward')} placeholder="ICU, Maternity..." />
           </div>
           <div>
             <label className="inp-label">Bed Number</label>
@@ -123,32 +123,40 @@ export default function AddPatient() {
             <input className="inp" value={form.diagnosis} onChange={set('diagnosis')} placeholder="e.g. Acute Myocardial Infarction" />
           </div>
           <div>
-            <label className="inp-label">Allergies <span style={{ color:'var(--text3)', textTransform:'none', letterSpacing:0 }}>(comma separated)</span></label>
+            <label className="inp-label">Allergies <span style={{ color:'var(--text3)', textTransform:'none', letterSpacing:0, fontWeight:400 }}>(comma separated)</span></label>
             <input className="inp" value={form.allergies} onChange={set('allergies')} placeholder="Penicillin, Sulfa drugs" />
           </div>
           <div>
-            <label className="inp-label">Medical History <span style={{ color:'var(--text3)', textTransform:'none', letterSpacing:0 }}>(comma separated)</span></label>
-            <input className="inp" value={form.medicalHistory} onChange={set('medicalHistory')} placeholder="Hypertension, Type 2 Diabetes" />
+            <label className="inp-label">Medical History <span style={{ color:'var(--text3)', textTransform:'none', letterSpacing:0, fontWeight:400 }}>(comma separated)</span></label>
+            <input className="inp" value={form.medicalHistory} onChange={set('medicalHistory')} placeholder="Hypertension, Diabetes" />
           </div>
         </div>
 
         {error && (
-          <div style={{ display:'flex', alignItems:'center', gap:8, background:'var(--red-soft)', border:'1px solid var(--red)', borderRadius:10, padding:'11px 14px', color:'var(--red)', fontSize:13, marginTop:20 }}>
+          <div style={{ display:'flex', alignItems:'center', gap:8, background:'var(--red-soft)', border:'1px solid var(--red)', borderRadius:10, padding:'11px 14px', color:'var(--red)', fontSize:13, marginTop:18 }}>
             <Icon name="alert" size={15} color="var(--red)" /> {error}
           </div>
         )}
 
-        <div style={{ display:'flex', gap:12, marginTop:24, paddingTop:20, borderTop:'1px solid var(--border)' }}>
-          <button className="btn-primary" type="submit" disabled={loading} style={{ fontSize:14, padding:'11px 28px' }}>
+        <div style={{ display:'flex', gap:10, marginTop:22, paddingTop:18, borderTop:'1px solid var(--border)', flexWrap:'wrap' }}>
+          <button className="btn-primary" type="submit" disabled={loading} style={{ fontSize:14, padding:'12px 24px', flex:1, justifyContent:'center', minWidth:140 }}>
             {loading
               ? <><span style={{ width:14, height:14, border:'2px solid rgba(255,255,255,0.4)', borderTopColor:'#fff', borderRadius:'50%', display:'inline-block', animation:'spin 0.7s linear infinite' }} /> Saving...</>
               : <><Icon name="check" size={16} color="#fff" /> Save Patient</>}
           </button>
-          <button type="button" className="btn-ghost" onClick={() => navigate('/patients')} style={{ fontSize:14, padding:'11px 20px' }}>
+          <button type="button" className="btn-ghost" onClick={() => navigate('/patients')} style={{ fontSize:14, padding:'12px 20px' }}>
             Cancel
           </button>
         </div>
       </form>
+
+      <style>{`
+        @keyframes spin { to { transform: rotate(360deg) } }
+        @media (max-width: 600px) {
+          .form-grid-2 { grid-template-columns: 1fr !important; }
+          .form-grid-2 > div[style*="1/-1"] { grid-column: 1 !important; }
+        }
+      `}</style>
     </div>
   )
 }

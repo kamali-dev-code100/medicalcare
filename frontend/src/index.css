@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 
-/* ── Dark Theme ─────────────────────────────────────────────────────────────── */
+/* ── Dark Theme ──────────────────────────────────────────────────────────────*/
 [data-theme="dark"], :root {
   --bg:          #060d18;
   --bg2:         #0b1525;
@@ -30,7 +30,7 @@
   --sidebar-w:   260px;
 }
 
-/* ── Light Theme ────────────────────────────────────────────────────────────── */
+/* ── Light Theme ─────────────────────────────────────────────────────────────*/
 [data-theme="light"] {
   --bg:          #f0f4f8;
   --bg2:         #e4edf5;
@@ -57,7 +57,7 @@
   --shadow-lg:   0 4px 32px rgba(0,80,160,0.12);
 }
 
-/* ── Base ───────────────────────────────────────────────────────────────────── */
+/* ── Base ────────────────────────────────────────────────────────────────────*/
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
@@ -68,13 +68,88 @@ body {
   min-height: 100vh;
 }
 
-/* ── Scrollbar ──────────────────────────────────────────────────────────────── */
+/* ── Scrollbar ───────────────────────────────────────────────────────────────*/
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--text3); }
 
-/* ── Utility classes ────────────────────────────────────────────────────────── */
+/* ── Layout ──────────────────────────────────────────────────────────────────*/
+.sidebar {
+  width: var(--sidebar-w);
+  min-height: 100vh;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 200;
+  transition: transform 0.3s ease, background 0.3s;
+}
+
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 150;
+  backdrop-filter: blur(2px);
+}
+
+.sidebar-close-btn {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.hamburger-btn {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+  margin-right: 4px;
+  flex-shrink: 0;
+}
+
+.hamburger-btn:hover { background: var(--surface2); }
+
+.main-content {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.topbar {
+  height: 62px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  transition: background 0.3s;
+}
+
+.page-content {
+  padding: 28px;
+  flex: 1;
+}
+
+.hide-mobile { display: block; }
+.show-mobile { display: none; }
+
+/* ── Utility classes ─────────────────────────────────────────────────────────*/
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -93,9 +168,11 @@ body {
   cursor: pointer; font-family: 'Outfit', sans-serif;
   transition: opacity 0.2s, transform 0.15s;
   letter-spacing: 0.2px;
+  white-space: nowrap;
 }
 .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
 .btn-primary:active { transform: translateY(0); }
+.btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
 .btn-ghost {
   display: inline-flex; align-items: center; gap: 6px;
@@ -104,6 +181,7 @@ body {
   padding: 8px 16px; font-size: 13px; font-weight: 500;
   cursor: pointer; font-family: 'Outfit', sans-serif;
   transition: all 0.2s;
+  white-space: nowrap;
 }
 .btn-ghost:hover { background: var(--surface2); color: var(--text); border-color: var(--accent); }
 
@@ -113,27 +191,28 @@ body {
   padding: 3px 10px; border-radius: 20px;
   letter-spacing: 0.3px;
 }
-.badge-critical { background: var(--red-soft);    color: var(--red); }
-.badge-stable   { background: var(--green-soft);  color: var(--green); }
-.badge-monitoring{ background: var(--yellow-soft); color: var(--yellow); }
-.badge-admitted { background: var(--accent-soft); color: var(--accent); }
-.badge-discharged{ background: var(--surface3);   color: var(--text3); }
-.badge-scheduled { background: var(--accent-soft); color: var(--accent); }
-.badge-completed { background: var(--green-soft);  color: var(--green); }
-.badge-cancelled { background: var(--red-soft);    color: var(--red); }
+.badge-critical   { background: var(--red-soft);    color: var(--red); }
+.badge-stable     { background: var(--green-soft);  color: var(--green); }
+.badge-monitoring { background: var(--yellow-soft); color: var(--yellow); }
+.badge-admitted   { background: var(--accent-soft); color: var(--accent); }
+.badge-discharged { background: var(--surface3);    color: var(--text3); }
+.badge-scheduled  { background: var(--accent-soft); color: var(--accent); }
+.badge-completed  { background: var(--green-soft);  color: var(--green); }
+.badge-cancelled  { background: var(--red-soft);    color: var(--red); }
 
-/* ── Input ──────────────────────────────────────────────────────────────────── */
+/* ── Input ───────────────────────────────────────────────────────────────────*/
 .inp {
   width: 100%;
   background: var(--surface2);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 10px 14px;
+  padding: 11px 14px;
   color: var(--text);
-  font-size: 13.5px;
+  font-size: 14px;
   font-family: 'Outfit', sans-serif;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
+  -webkit-appearance: none;
 }
 .inp:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
 .inp::placeholder { color: var(--text3); }
@@ -145,7 +224,7 @@ body {
   color: var(--text3); margin-bottom: 6px; margin-top: 14px;
 }
 
-/* ── Table ──────────────────────────────────────────────────────────────────── */
+/* ── Table ───────────────────────────────────────────────────────────────────*/
 .table { width: 100%; border-collapse: collapse; }
 .table th {
   font-size: 10.5px; font-weight: 700; letter-spacing: 1.5px;
@@ -162,7 +241,18 @@ body {
 .table tr:last-child td { border-bottom: none; }
 .table tbody tr:hover td { background: var(--surface2); }
 
-/* ── Animations ─────────────────────────────────────────────────────────────── */
+/* Responsive table wrapper */
+.table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── Grid helpers ────────────────────────────────────────────────────────────*/
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+
+/* ── Animations ──────────────────────────────────────────────────────────────*/
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(14px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -175,8 +265,114 @@ body {
   from { transform: translateX(120px); opacity: 0; }
   to   { transform: translateX(0);     opacity: 1; }
 }
-.fade-up { animation: fadeUp 0.35s ease both; }
+.fade-up   { animation: fadeUp 0.35s ease both; }
 .fade-up-1 { animation: fadeUp 0.35s 0.05s ease both; }
 .fade-up-2 { animation: fadeUp 0.35s 0.10s ease both; }
 .fade-up-3 { animation: fadeUp 0.35s 0.15s ease both; }
 .fade-up-4 { animation: fadeUp 0.35s 0.20s ease both; }
+
+/* ── RESPONSIVE: Tablet (768px) ──────────────────────────────────────────────*/
+@media (max-width: 768px) {
+  /* Sidebar becomes slide-in drawer */
+  .sidebar {
+    transform: translateX(-100%);
+    width: 280px;
+    box-shadow: var(--shadow-lg);
+  }
+  .sidebar.sidebar-open {
+    transform: translateX(0);
+  }
+  .sidebar-overlay { display: block; }
+  .sidebar-close-btn { display: flex; }
+  .hamburger-btn { display: flex; }
+
+  /* Main takes full width */
+  .main-content { margin-left: 0; }
+
+  .topbar { padding: 0 16px; gap: 8px; }
+  .page-content { padding: 16px; }
+
+  /* Hide/show helpers */
+  .hide-mobile { display: none !important; }
+  .show-mobile { display: block !important; }
+
+  /* Add patient button - icon only on mobile */
+  .add-patient-btn { padding: 9px 12px; }
+
+  /* Grids go single column */
+  .grid-2 { grid-template-columns: 1fr; }
+  .grid-3 { grid-template-columns: 1fr; }
+  .grid-4 { grid-template-columns: 1fr 1fr; }
+
+  /* Cards */
+  .card { padding: 16px; border-radius: 14px; }
+
+  /* Login page */
+  .login-right-panel { display: none !important; }
+  .login-left-panel { width: 100% !important; padding: 24px 20px !important; }
+
+  /* Dashboard stats grid */
+  .stats-grid { grid-template-columns: 1fr 1fr !important; gap: 12px !important; }
+
+  /* Page headers */
+  .page-header { flex-direction: column !important; align-items: flex-start !important; gap: 12px !important; }
+  .page-header .btn-primary { width: 100%; justify-content: center; }
+
+  /* Form grids */
+  .form-grid-2 { grid-template-columns: 1fr !important; }
+
+  /* Appointment form */
+  .appt-form-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── RESPONSIVE: Small Mobile (480px) ───────────────────────────────────────*/
+@media (max-width: 480px) {
+  .grid-4 { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: 1fr !important; }
+
+  .topbar { height: 56px; }
+  .page-content { padding: 12px; }
+
+  .card { padding: 14px; border-radius: 12px; }
+
+  /* Buttons */
+  .btn-primary { padding: 10px 14px; font-size: 13px; }
+  .btn-ghost   { padding: 8px 12px;  font-size: 12px; }
+
+  /* Tables scroll horizontally */
+  .table th, .table td { padding: 10px 10px; font-size: 12.5px; }
+
+  /* Patient cards on mobile */
+  .patient-row-mobile {
+    display: flex !important;
+    flex-direction: column;
+    gap: 4px;
+  }
+}
+
+/* ── RESPONSIVE: Large Desktop ───────────────────────────────────────────────*/
+@media (min-width: 1280px) {
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .stats-grid { grid-template-columns: repeat(4, 1fr) !important; }
+}
+
+/* ── Mobile bottom nav (optional sticky) ─────────────────────────────────────*/
+.bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  z-index: 100;
+  padding: 0 8px;
+  align-items: center;
+  justify-content: space-around;
+}
+
+@media (max-width: 768px) {
+  .bottom-nav { display: flex; }
+  .page-content { padding-bottom: 76px; }
+}
