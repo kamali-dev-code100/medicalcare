@@ -122,7 +122,7 @@ export default function Dashboard() {
       </div>
 
       {/* Table + Appointments — stack on mobile */}
-      <div style={{ display:'grid', gridTemplateColumns:'1.6fr 1fr', gap:16, marginBottom:20 }} className="dashboard-bottom-grid">
+      <div style={{ display:'grid', gridTemplateColumns:'1.6fr 1fr', gap:16, marginBottom:20 , width:'100%'  }} className="dashboard-bottom-grid">
 
         {/* Recent Patients */}
         <div className="card fade-up-2">
@@ -231,6 +231,15 @@ export default function Dashboard() {
           .stats-grid { grid-template-columns: 1fr 1fr !important; }
         }
       `}</style>
+      <style>{`
+  @media (max-width: 768px) {
+    .dashboard-bottom-grid { grid-template-columns: 1fr !important; }
+    .stats-grid { grid-template-columns: 1fr 1fr !important; }
+  }
+  @media (max-width: 480px) {
+    .stats-grid { grid-template-columns: 1fr 1fr !important; }
+  }
+`}</style>
     </div>
   )
 }
