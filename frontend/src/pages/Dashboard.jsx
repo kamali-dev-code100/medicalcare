@@ -29,7 +29,14 @@ export default function Dashboard() {
   const [patients, setPatients] = useState([])
   const [appts,    setAppts]    = useState([])
   const [loading,  setLoading]  = useState(true)
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
   const navigate = useNavigate()
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
 
   useEffect(() => {
     const load = async () => {
@@ -67,9 +74,7 @@ export default function Dashboard() {
     <div>
       {/* Page Header */}
       <div style={{ marginBottom:20 }} className="fade-up">
-        <h1 style={{ fontSize:'clamp(20px, 4vw, 26px)', fontWeight:800, letterSpacing:'-0.5px', marginBottom:4 }}>
-          Dashboard
-        </h1>
+        <h1 style={{ fontSize:'clamp(20px, 4vw, 26px)', fontWeight:800, letterSpacing:'-0.5px', marginBottom:4 }}>Dashboard</h1>
         <p style={{ fontSize:14, color:'var(--text2)' }}>Overview of hospital operations and patient status</p>
       </div>
 
@@ -99,8 +104,12 @@ export default function Dashboard() {
         </button>
       </div>
 
-      {/* Stat Cards — responsive grid */}
-      <div className="stats-grid" style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:14, marginBottom:20 }}>
+      {/* Stat Cards */}
+      <div style={{
+        display:'grid',
+        gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(4,1fr)',
+        gap:14, marginBottom:20
+      }}>
         {statCards.map((s, i) => (
           <div key={i} className={`card fade-up-${i+1}`}
             style={{ cursor:'pointer', position:'relative', overflow:'hidden', padding:'16px' }}
@@ -121,8 +130,12 @@ export default function Dashboard() {
         ))}
       </div>
 
-      {/* Table + Appointments — stack on mobile */}
-      <div style={{ display:'grid', gridTemplateColumns:'1.6fr 1fr', gap:16, marginBottom:20 , width:'100%'  }} className="dashboard-bottom-grid">
+      {/* Recent Patients + Today's Schedule — stack on mobile */}
+      <div style={{
+        display:'grid',
+        gridTemplateColumns: isMobile ? '1fr' : '1.6fr 1fr',
+        gap:16, marginBottom:20
+      }}>
 
         {/* Recent Patients */}
         <div className="card fade-up-2">
@@ -220,26 +233,6 @@ export default function Dashboard() {
           </BarChart>
         </ResponsiveContainer>
       </div>
-
-      {/* Mobile responsive overrides */}
-      <style>{`
-        @media (max-width: 768px) {
-          .dashboard-bottom-grid { grid-template-columns: 1fr !important; }
-          .stats-grid { grid-template-columns: 1fr 1fr !important; }
-        }
-        @media (max-width: 480px) {
-          .stats-grid { grid-template-columns: 1fr 1fr !important; }
-        }
-      `}</style>
-      <style>{`
-  @media (max-width: 768px) {
-    .dashboard-bottom-grid { grid-template-columns: 1fr !important; }
-    .stats-grid { grid-template-columns: 1fr 1fr !important; }
-  }
-  @media (max-width: 480px) {
-    .stats-grid { grid-template-columns: 1fr 1fr !important; }
-  }
-`}</style>
     </div>
   )
 }
